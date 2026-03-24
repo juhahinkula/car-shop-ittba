@@ -11,6 +11,8 @@ type AddCarProps = {
   handleAdd: (car: Car) => void;
 }
 
+const API_KEY = 1243432224434;
+
 export default function AddCar(props: AddCarProps) {
   const [open, setOpen] = useState(false);
   const [car, setCar] = useState<Car>({
