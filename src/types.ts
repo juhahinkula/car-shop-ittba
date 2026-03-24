@@ -14,3 +14,5 @@ export type CarData = {
     }
   }
 }
+
+export type Car = Omit<CarData, "_links">
