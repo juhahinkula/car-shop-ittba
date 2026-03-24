@@ -11,7 +11,7 @@ type AddCarProps = {
   handleAdd: (car: Car) => void;
 }
 
-const API_KEY = 1243432224434;
+const GITHUB_TOKEN=4234343243423432;
 
 export default function AddCar(props: AddCarProps) {
   const [open, setOpen] = useState(false);
