@@ -4,7 +4,9 @@ import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { DataGrid } from "@mui/x-data-grid";
 import Button from "@mui/material/Button";
 import AddCar from "./AddCar";
+import EditCar from "./EditCar";
 import Stack from "@mui/material/Stack";
+import { fetchCar, deleteCar } from "../carapi";
 
 function CarList() {
   const [cars, setCars] = useState<CarData[]>([]);
@@ -28,32 +30,26 @@ function CarList() {
           onClick={() => handleDelete(params.id as string)}>
           Delete
         </Button>
-    },        
+    }, 
+    {
+      field: "_links.car.href",
+      headerName: "",
+      sortable: false,
+      filterable: false,
+      renderCell: (params: GridRenderCellParams) => 
+        <EditCar url={params.id as string} car={params.row} handleUpdate={handleUpdate} />    
+    }       
   ]
 
   const getCars = () => {
-    fetch(import.meta.env.VITE_API_URL + "/cars")
-    .then(response => {
-      if (!response.ok)
-        throw new Error("Error when fetching cars.");
-
-      return response.json();
-    })
+    fetchCar()
     .then(data => setCars(data._embedded.cars))
     .catch(err => console.error(err))
   } 
 
   const handleDelete = (url: string) => {
     if (window.confirm("Are you sure?")) {
-      fetch(url, {
-        method: "DELETE"
-      })
-      .then(response => {
-        if (!response.ok)
-          throw new Error("Error when deleting a car");
-
-        return response.json();
-      })
+      deleteCar(url)
       .then(() => getCars())
       .catch(err => console.error(err));
     }
@@ -75,6 +71,25 @@ function CarList() {
     })
     .then(() => getCars())
     .catch(err => console.error(err));
+  }
+
+  const handleUpdate = (url: string, updatedCar: Car) => {
+    fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-type":"application/json"
+      },
+      body: JSON.stringify(updatedCar)
+    })
+    .then(response => {
+      if (!response.ok)
+        throw new Error("Error when updating a car");
+
+      return response.json();
+    })
+    .then(() => getCars())
+    .catch(err => console.error(err))
+
   }
 
   useEffect(() => {

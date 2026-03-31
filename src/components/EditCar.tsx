@@ -6,11 +6,13 @@ import DialogTitle from '@mui/material/DialogTitle';
 import type { Car } from '../types';
 import CarForm from './CarForm';
 
-type AddCarProps = {
-  handleAdd: (car: Car) => void;
+type EditCarProps = {
+  url: string,
+  car: Car;
+  handleUpdate: (url: string, updatedCar: Car) => void
 }
 
-export default function AddCar(props: AddCarProps) {
+export default function EditCar(props: EditCarProps) {
   const [open, setOpen] = useState(false);
   const [car, setCar] = useState<Car>({
     brand: "",
@@ -22,6 +24,14 @@ export default function AddCar(props: AddCarProps) {
   })
 
   const handleClickOpen = () => {
+    setCar({
+      brand: props.car.brand,
+      model: props.car.model,
+      color: props.car.color,
+      fuel: props.car.fuel,
+      modelYear: props.car.modelYear,
+      price: props.car.price
+    })
     setOpen(true);
   };
 
@@ -30,25 +40,17 @@ export default function AddCar(props: AddCarProps) {
   };
 
   const handleSubmit = () => {
-    props.handleAdd(car);
-    setCar({
-      brand: "",
-      model: "",
-      color: "",
-      fuel: "",
-      modelYear: new Date().getFullYear(),
-      price: 0      
-    }) 
+    props.handleUpdate(props.url, car);
     handleClose();
   };
 
   return (
     <>
-      <Button variant="outlined" onClick={handleClickOpen}>
-        Add Car
+      <Button size="small" onClick={handleClickOpen}>
+        Edit
       </Button>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>New Car</DialogTitle>
+        <DialogTitle>Update Car</DialogTitle>
         <CarForm car={car} setCar={setCar} />
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
